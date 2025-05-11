@@ -1,4 +1,7 @@
-public record SubstanciaInorganica(string Nome)
+namespace BoraOrganismos
 {
-    public List<Molecula> MoleculasSimples { get; set; } = new();
+    public record SubstanciaInorganica(string Nome)
+    {
+        public List<Molecula> MoleculasSimples { get; set; } = new();
+    }
 }

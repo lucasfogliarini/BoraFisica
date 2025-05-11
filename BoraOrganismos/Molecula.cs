@@ -1,4 +1,7 @@
-public record Molecula(string FormulaQuimica)
+namespace BoraOrganismos
 {
-    public List<Atomo> Componentes { get; set; } = [];
+    public record Molecula(string FormulaQuimica)
+    {
+        public List<Atomo> Componentes { get; set; } = [];
+    }
 }
