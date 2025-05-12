@@ -1,277 +1,415 @@
-namespace BoraOrganismos
+Ôªønamespace BoraOrganismos;
+
+public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadOnlyList<Particula> Eletrons)
 {
-    public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadOnlyList<Particula> Eletrons)
+    /// <summary>
+    /// Massa do √°tomo considerando o defeito de massa (energia de liga√ß√£o nuclear).
+    /// Este valor ser√° menor que a massa te√≥rica.
+    /// </summary>
+    public double Massa => MassaTeorica - DefeitoDeMassa;
+
+    /// <summary>
+    /// Massa total do √°tomo (em unidades de massa at√¥mica), somando pr√≥tons, n√™utrons e el√©trons.
+    /// </summary>
+    public double MassaTeorica => Nucleons.Sum(e => e.Massa) + Eletrons.Sum(e => e.Massa);
+
+    /// <summary>
+    /// N√∫mero at√¥mico (Z), ou seja, o n√∫mero de pr√≥tons no n√∫cleo.
+    /// </summary>
+    public int NumeroAtomico => Nucleons.Count(p => p.Tipo == TipoParticula.Proton);
+
+    /// <summary>
+    /// N√∫mero de n√™utrons no n√∫cleo (N).
+    /// </summary>
+    public int NumeroDeNeutrons => Nucleons.Count(p => p.Tipo == TipoParticula.Neutron);
+
+    /// <summary>
+    /// Defeito de massa estimado com base em f√≥rmula emp√≠rica (modelo semiemp√≠rico de massa).
+    /// O valor depende do n√∫mero de pr√≥tons e n√™utrons.
+    /// </summary>
+    public double DefeitoDeMassa
     {
-        /// <summary>
-        /// Massa total do ·tomo, considerando os nÍutrons e prÛtons (nucleons).
-        /// </summary>
-        public double Massa { get { return Nucleons.Sum(e => e.Massa); } }
-
-        /// <summary>
-        /// N˙mero atÙmico do elemento quÌmico.
-        /// </summary>
-        public int NumeroAtomico => Nucleons.Count(p => p.Tipo == TipoParticula.Proton);
-
-        public static Atomo Criar(Elemento elemento)
+        get
         {
-            int numeroAtomico = (int)elemento;
+            int Z = NumeroAtomico;
+            int N = NumeroDeNeutrons;
+            int A = Z + N; // N√∫mero de massa
 
-            List<Particula> nucleons = [];
-            List<Particula> eletrons = [];
-            for (int i = 0; i < numeroAtomico; i++)
-            {
-                nucleons.Add(Particula.CriarProton());
-                nucleons.Add(Particula.CriarNeutron());
-            }
+            // F√≥rmula simplificada (MeV/c¬≤ convertido para u)
+            double energiaLigacaoMeV = 15.75 * A
+                                     - 17.8 * Math.Pow(A, 2.0 / 3.0)
+                                     - 0.71 * Z * Z / Math.Pow(A, 1.0 / 3.0)
+                                     - 23.7 * Math.Pow(N - Z, 2) / A;
 
-            // Adiciona elÈtrons (·tomo neutro)
-            for (int i = 0; i < numeroAtomico; i++)
-            {
-                eletrons.Add(Particula.CriarEletron());
-            }
+            double energiaLigacaoU = energiaLigacaoMeV / 931.494; // 1 u ‚âà 931.494 MeV
 
-            return new Atomo(elemento, nucleons, eletrons);
+            return energiaLigacaoU;
         }
     }
 
-    public enum Elemento
+    /// <summary>
+    /// Cria um √°tomo baseado no is√≥topo mais est√°vel conhecido, com n√∫mero de n√™utrons realista.
+    /// </summary>
+    public static Atomo Criar(Elemento elemento)
     {
-        /// <summary>HidrogÍnio</summary>
-        H = 1,
-        /// <summary>HÈlio</summary>
-        He = 2,
-        /// <summary>LÌtio</summary>
-        Li = 3,
-        /// <summary>BerÌlio</summary>
-        Be = 4,
-        /// <summary>Boro</summary>
-        B = 5,
-        /// <summary>Carbono</summary>
-        C = 6,
-        /// <summary>NitrogÍnio</summary>
-        N = 7,
-        /// <summary>OxigÍnio</summary>
-        O = 8,
-        /// <summary>Fl˙or</summary>
-        F = 9,
-        /// <summary>NeÙnio</summary>
-        Ne = 10,
-        /// <summary>SÛdio</summary>
-        Na = 11,
-        /// <summary>MagnÈsio</summary>
-        Mg = 12,
-        /// <summary>AlumÌnio</summary>
-        Al = 13,
-        /// <summary>SilÌcio</summary>
-        Si = 14,
-        /// <summary>FÛsforo</summary>
-        P = 15,
-        /// <summary>Enxofre</summary>
-        S = 16,
-        /// <summary>Cloro</summary>
-        Cl = 17,
-        /// <summary>ArgÙnio</summary>
-        Ar = 18,
-        /// <summary>Pot·ssio</summary>
-        K = 19,
-        /// <summary>C·lcio</summary>
-        Ca = 20,
-        /// <summary>Esc‚ndio</summary>
-        Sc = 21,
-        /// <summary>Tit‚nio</summary>
-        Ti = 22,
-        /// <summary>Van·dio</summary>
-        V = 23,
-        /// <summary>Cromo</summary>
-        Cr = 24,
-        /// <summary>ManganÍs</summary>
-        Mn = 25,
-        /// <summary>Ferro</summary>
-        Fe = 26,
-        /// <summary>Cobalto</summary>
-        Co = 27,
-        /// <summary>NÌquel</summary>
-        Ni = 28,
-        /// <summary>Cobre</summary>
-        Cu = 29,
-        /// <summary>Zinco</summary>
-        Zn = 30,
-        /// <summary>G·lio</summary>
-        Ga = 31,
-        /// <summary>Germ‚nio</summary>
-        Ge = 32,
-        /// <summary>ArsÍnio</summary>
-        As = 33,
-        /// <summary>SelÍnio</summary>
-        Se = 34,
-        /// <summary>Bromo</summary>
-        Br = 35,
-        /// <summary>CriptÙnio</summary>
-        Kr = 36,
-        /// <summary>RubÌdio</summary>
-        Rb = 37,
-        /// <summary>EstrÙncio</summary>
-        Sr = 38,
-        /// <summary>Õtrio</summary>
-        Y = 39,
-        /// <summary>ZircÙnio</summary>
-        Zr = 40,
-        /// <summary>NiÛbio</summary>
-        Nb = 41,
-        /// <summary>MolibdÍnio</summary>
-        Mo = 42,
-        /// <summary>TecnÈcio</summary>
-        Tc = 43,
-        /// <summary>RutÍnio</summary>
-        Ru = 44,
-        /// <summary>RÛdio</summary>
-        Rh = 45,
-        /// <summary>Pal·dio</summary>
-        Pd = 46,
-        /// <summary>Prata</summary>
-        Ag = 47,
-        /// <summary>C·dmio</summary>
-        Cd = 48,
-        /// <summary>Õndio</summary>
-        In = 49,
-        /// <summary>Estanho</summary>
-        Sn = 50,
-        /// <summary>AntimÙnio</summary>
-        Sb = 51,
-        /// <summary>Tel˙rio</summary>
-        Te = 52,
-        /// <summary>Iodo</summary>
-        I = 53,
-        /// <summary>XenÙnio</summary>
-        Xe = 54,
-        /// <summary>CÈsio</summary>
-        Cs = 55,
-        /// <summary>B·rio</summary>
-        Ba = 56,
-        /// <summary>Lant‚nio</summary>
-        La = 57,
-        /// <summary>CÈrio</summary>
-        Ce = 58,
-        /// <summary>PraseodÌmio</summary>
-        Pr = 59,
-        /// <summary>NeodÌmio</summary>
-        Nd = 60,
-        /// <summary>PromÈcio</summary>
-        Pm = 61,
-        /// <summary>Sam·rio</summary>
-        Sm = 62,
-        /// <summary>EurÛpio</summary>
-        Eu = 63,
-        /// <summary>GadolÌnio</summary>
-        Gd = 64,
-        /// <summary>TÈrbio</summary>
-        Tb = 65,
-        /// <summary>DisprÛsio</summary>
-        Dy = 66,
-        /// <summary>HÛlmio</summary>
-        Ho = 67,
-        /// <summary>…rbio</summary>
-        Er = 68,
-        /// <summary>T˙lio</summary>
-        Tm = 69,
-        /// <summary>ItÈrbio</summary>
-        Yb = 70,
-        /// <summary>LutÈcio</summary>
-        Lu = 71,
-        /// <summary>H·fnio</summary>
-        Hf = 72,
-        /// <summary>T‚ntalo</summary>
-        Ta = 73,
-        /// <summary>TungstÍnio</summary>
-        W = 74,
-        /// <summary>RÍnio</summary>
-        Re = 75,
-        /// <summary>”smio</summary>
-        Os = 76,
-        /// <summary>IrÌdio</summary>
-        Ir = 77,
-        /// <summary>Platina</summary>
-        Pt = 78,
-        /// <summary>Ouro</summary>
-        Au = 79,
-        /// <summary>Merc˙rio</summary>
-        Hg = 80,
-        /// <summary>T·lio</summary>
-        Tl = 81,
-        /// <summary>Chumbo</summary>
-        Pb = 82,
-        /// <summary>Bismuto</summary>
-        Bi = 83,
-        /// <summary>PolÙnio</summary>
-        Po = 84,
-        /// <summary>¡stato</summary>
-        At = 85,
-        /// <summary>RadÙnio</summary>
-        Rn = 86,
-        /// <summary>Fr‚ncio</summary>
-        Fr = 87,
-        /// <summary>R·dio</summary>
-        Ra = 88,
-        /// <summary>ActÌnio</summary>
-        Ac = 89,
-        /// <summary>TÛrio</summary>
-        Th = 90,
-        /// <summary>ProtactÌnio</summary>
-        Pa = 91,
-        /// <summary>Ur‚nio</summary>
-        U = 92,
-        /// <summary>Net˙nio</summary>
-        Np = 93,
-        /// <summary>PlutÙnio</summary>
-        Pu = 94,
-        /// <summary>AmerÌcio</summary>
-        Am = 95,
-        /// <summary>C˙rio</summary>
-        Cm = 96,
-        /// <summary>BerquÈlio</summary>
-        Bk = 97,
-        /// <summary>CalifÛrnio</summary>
-        Cf = 98,
-        /// <summary>Einsteinio</summary>
-        Es = 99,
-        /// <summary>FÈrmio</summary>
-        Fm = 100,
-        /// <summary>MendelÈvio</summary>
-        Md = 101,
-        /// <summary>NobÈlio</summary>
-        No = 102,
-        /// <summary>LaurÍncio</summary>
-        Lr = 103,
-        /// <summary>RutherfÛrdio</summary>
-        Rf = 104,
-        /// <summary>D˙bnio</summary>
-        Db = 105,
-        /// <summary>SeabÛrgio</summary>
-        Sg = 106,
-        /// <summary>BÛhrio</summary>
-        Bh = 107,
-        /// <summary>H·ssio</summary>
-        Hs = 108,
-        /// <summary>MeitnÈrio</summary>
-        Mt = 109,
-        /// <summary>Darmst·dio</summary>
-        Ds = 110,
-        /// <summary>RoentgÍnio</summary>
-        Rg = 111,
-        /// <summary>CopernÌcio</summary>
-        Cn = 112,
-        /// <summary>NihÙnio</summary>
-        Nh = 113,
-        /// <summary>FlerÛvio</summary>
-        Fl = 114,
-        /// <summary>MoscÛvio</summary>
-        Mc = 115,
-        /// <summary>LivermÛrio</summary>
-        Lv = 116,
-        /// <summary>Tenessino</summary>
-        Ts = 117,
-        /// <summary>OganessÙnio</summary>
-        Og = 118
+        int numeroAtomico = (int)elemento;
+        int neutrons = Neutrons(elemento);
+
+        List<Particula> nucleons = [];
+        List<Particula> eletrons = [];
+
+        for (int i = 0; i < numeroAtomico; i++)
+            nucleons.Add(Particula.CriarProton());
+
+        for (int i = 0; i < neutrons; i++)
+            nucleons.Add(Particula.CriarNeutron());
+
+        for (int i = 0; i < numeroAtomico; i++)
+            eletrons.Add(Particula.CriarEletron());
+
+        return new Atomo(elemento, nucleons, eletrons);
     }
 
+    /// <summary>
+    /// Retorna o n√∫mero de n√™utrons do is√≥topo mais abundante (ou est√°vel) para o elemento especificado,
+    /// com base em dados reais de abund√¢ncia isot√≥pica da Tabela Peri√≥dica at√© Z = 90 (T√≥rio).
+    ///
+    /// Este m√©todo inclui explicitamente apenas os elementos cujo n√∫mero de n√™utrons (N) √© diferente do n√∫mero de pr√≥tons (Z),
+    /// ou seja, onde N ‚â† Z. Isso reflete a tend√™ncia natural de estabilidade nuclear,
+    /// na qual elementos mais pesados precisam de mais n√™utrons que pr√≥tons.
+    ///
+    /// Fonte dos dados: IUPAC, NIST e valores de is√≥topos mais est√°veis conhecidos.
+    /// </summary>
+    private static int Neutrons(Elemento elemento)
+    {
+        int numeroAtomico = (int)elemento;
+
+        return elemento switch
+        {
+            Elemento.H => 0,
+            Elemento.Li => 4,
+            Elemento.Be => 5,
+            Elemento.B => 6,
+            Elemento.F => 10,
+            Elemento.Ne => 10,
+            Elemento.Na => 12,
+            Elemento.Al => 14,
+            Elemento.P => 16,
+            Elemento.Cl => 18,
+            Elemento.Ar => 22,
+            Elemento.K => 20,
+            Elemento.Sc => 24,
+            Elemento.Ti => 26,
+            Elemento.V => 28,
+            Elemento.Cr => 28,
+            Elemento.Mn => 30,
+            Elemento.Fe => 30,
+            Elemento.Co => 32,
+            Elemento.Ni => 31,
+            Elemento.Cu => 35,
+            Elemento.Zn => 35,
+            Elemento.Ga => 39,
+            Elemento.Ge => 41,
+            Elemento.As => 42,
+            Elemento.Se => 45,
+            Elemento.Br => 45,
+            Elemento.Kr => 48,
+            Elemento.Rb => 48,
+            Elemento.Sr => 50,
+            Elemento.Y => 50,
+            Elemento.Zr => 51,
+            Elemento.Nb => 52,
+            Elemento.Mo => 54,
+            Elemento.Tc => 55,
+            Elemento.Ru => 57,
+            Elemento.Rh => 58,
+            Elemento.Pd => 60,
+            Elemento.Ag => 61,
+            Elemento.Cd => 64,
+            Elemento.In => 66,
+            Elemento.Sn => 69,
+            Elemento.Sb => 71,
+            Elemento.Te => 76,
+            Elemento.I => 74,
+            Elemento.Xe => 77,
+            Elemento.Cs => 78,
+            Elemento.Ba => 81,
+            Elemento.La => 82,
+            Elemento.Ce => 82,
+            Elemento.Pr => 82,
+            Elemento.Nd => 84,
+            Elemento.Pm => 84,
+            Elemento.Sm => 88,
+            Elemento.Eu => 89,
+            Elemento.Gd => 93,
+            Elemento.Tb => 94,
+            Elemento.Dy => 97,
+            Elemento.Ho => 98,
+            Elemento.Er => 99,
+            Elemento.Tm => 100,
+            Elemento.Yb => 103,
+            Elemento.Lu => 104,
+            Elemento.Hf => 106,
+            Elemento.Ta => 108,
+            Elemento.W => 110,
+            Elemento.Re => 111,
+            Elemento.Os => 114,
+            Elemento.Ir => 115,
+            Elemento.Pt => 117,
+            Elemento.Au => 118,
+            Elemento.Hg => 121,
+            Elemento.Tl => 123,
+            Elemento.Pb => 125,
+            Elemento.Bi => 126,
+            Elemento.Po => 125,
+            Elemento.At => 125,
+            Elemento.Rn => 136,
+            Elemento.Fr => 136,
+            Elemento.Ra => 138,
+            Elemento.Ac => 138,
+            Elemento.Th => 142,
+            _ => numeroAtomico
+        };
+    }
+}
+
+
+public enum Elemento
+{
+    /// <summary>Hidrog√™nio</summary>
+    H = 1,
+    /// <summary>H√©lio</summary>
+    He = 2,
+    /// <summary>L√≠tio</summary>
+    Li = 3,
+    /// <summary>Ber√≠lio</summary>
+    Be = 4,
+    /// <summary>Boro</summary>
+    B = 5,
+    /// <summary>Carbono</summary>
+    C = 6,
+    /// <summary>Nitrog√™nio</summary>
+    N = 7,
+    /// <summary>Oxig√™nio</summary>
+    O = 8,
+    /// <summary>Fl√∫or</summary>
+    F = 9,
+    /// <summary>Ne√¥nio</summary>
+    Ne = 10,
+    /// <summary>S√≥dio</summary>
+    Na = 11,
+    /// <summary>Magn√©sio</summary>
+    Mg = 12,
+    /// <summary>Alum√≠nio</summary>
+    Al = 13,
+    /// <summary>Sil√≠cio</summary>
+    Si = 14,
+    /// <summary>F√≥sforo</summary>
+    P = 15,
+    /// <summary>Enxofre</summary>
+    S = 16,
+    /// <summary>Cloro</summary>
+    Cl = 17,
+    /// <summary>Arg√¥nio</summary>
+    Ar = 18,
+    /// <summary>Pot√°ssio</summary>
+    K = 19,
+    /// <summary>C√°lcio</summary>
+    Ca = 20,
+    /// <summary>Esc√¢ndio</summary>
+    Sc = 21,
+    /// <summary>Tit√¢nio</summary>
+    Ti = 22,
+    /// <summary>Van√°dio</summary>
+    V = 23,
+    /// <summary>Cromo</summary>
+    Cr = 24,
+    /// <summary>Mangan√™s</summary>
+    Mn = 25,
+    /// <summary>Ferro</summary>
+    Fe = 26,
+    /// <summary>Cobalto</summary>
+    Co = 27,
+    /// <summary>N√≠quel</summary>
+    Ni = 28,
+    /// <summary>Cobre</summary>
+    Cu = 29,
+    /// <summary>Zinco</summary>
+    Zn = 30,
+    /// <summary>G√°lio</summary>
+    Ga = 31,
+    /// <summary>Germ√¢nio</summary>
+    Ge = 32,
+    /// <summary>Ars√™nio</summary>
+    As = 33,
+    /// <summary>Sel√™nio</summary>
+    Se = 34,
+    /// <summary>Bromo</summary>
+    Br = 35,
+    /// <summary>Cript√¥nio</summary>
+    Kr = 36,
+    /// <summary>Rub√≠dio</summary>
+    Rb = 37,
+    /// <summary>Estr√¥ncio</summary>
+    Sr = 38,
+    /// <summary>√çtrio</summary>
+    Y = 39,
+    /// <summary>Zirc√¥nio</summary>
+    Zr = 40,
+    /// <summary>Ni√≥bio</summary>
+    Nb = 41,
+    /// <summary>Molibd√™nio</summary>
+    Mo = 42,
+    /// <summary>Tecn√©cio</summary>
+    Tc = 43,
+    /// <summary>Rut√™nio</summary>
+    Ru = 44,
+    /// <summary>R√≥dio</summary>
+    Rh = 45,
+    /// <summary>Pal√°dio</summary>
+    Pd = 46,
+    /// <summary>Prata</summary>
+    Ag = 47,
+    /// <summary>C√°dmio</summary>
+    Cd = 48,
+    /// <summary>√çndio</summary>
+    In = 49,
+    /// <summary>Estanho</summary>
+    Sn = 50,
+    /// <summary>Antim√¥nio</summary>
+    Sb = 51,
+    /// <summary>Tel√∫rio</summary>
+    Te = 52,
+    /// <summary>Iodo</summary>
+    I = 53,
+    /// <summary>Xen√¥nio</summary>
+    Xe = 54,
+    /// <summary>C√©sio</summary>
+    Cs = 55,
+    /// <summary>B√°rio</summary>
+    Ba = 56,
+    /// <summary>Lant√¢nio</summary>
+    La = 57,
+    /// <summary>C√©rio</summary>
+    Ce = 58,
+    /// <summary>Praseod√≠mio</summary>
+    Pr = 59,
+    /// <summary>Neod√≠mio</summary>
+    Nd = 60,
+    /// <summary>Prom√©cio</summary>
+    Pm = 61,
+    /// <summary>Sam√°rio</summary>
+    Sm = 62,
+    /// <summary>Eur√≥pio</summary>
+    Eu = 63,
+    /// <summary>Gadol√≠nio</summary>
+    Gd = 64,
+    /// <summary>T√©rbio</summary>
+    Tb = 65,
+    /// <summary>Dispr√≥sio</summary>
+    Dy = 66,
+    /// <summary>H√≥lmio</summary>
+    Ho = 67,
+    /// <summary>√ârbio</summary>
+    Er = 68,
+    /// <summary>T√∫lio</summary>
+    Tm = 69,
+    /// <summary>It√©rbio</summary>
+    Yb = 70,
+    /// <summary>Lut√©cio</summary>
+    Lu = 71,
+    /// <summary>H√°fnio</summary>
+    Hf = 72,
+    /// <summary>T√¢ntalo</summary>
+    Ta = 73,
+    /// <summary>Tungst√™nio</summary>
+    W = 74,
+    /// <summary>R√™nio</summary>
+    Re = 75,
+    /// <summary>√ìsmio</summary>
+    Os = 76,
+    /// <summary>Ir√≠dio</summary>
+    Ir = 77,
+    /// <summary>Platina</summary>
+    Pt = 78,
+    /// <summary>Ouro</summary>
+    Au = 79,
+    /// <summary>Merc√∫rio</summary>
+    Hg = 80,
+    /// <summary>T√°lio</summary>
+    Tl = 81,
+    /// <summary>Chumbo</summary>
+    Pb = 82,
+    /// <summary>Bismuto</summary>
+    Bi = 83,
+    /// <summary>Pol√¥nio</summary>
+    Po = 84,
+    /// <summary>√Åstato</summary>
+    At = 85,
+    /// <summary>Rad√¥nio</summary>
+    Rn = 86,
+    /// <summary>Fr√¢ncio</summary>
+    Fr = 87,
+    /// <summary>R√°dio</summary>
+    Ra = 88,
+    /// <summary>Act√≠nio</summary>
+    Ac = 89,
+    /// <summary>T√≥rio</summary>
+    Th = 90,
+    /// <summary>Protact√≠nio</summary>
+    Pa = 91,
+    /// <summary>Ur√¢nio</summary>
+    U = 92,
+    /// <summary>Net√∫nio</summary>
+    Np = 93,
+    /// <summary>Plut√¥nio</summary>
+    Pu = 94,
+    /// <summary>Amer√≠cio</summary>
+    Am = 95,
+    /// <summary>C√∫rio</summary>
+    Cm = 96,
+    /// <summary>Berqu√©lio</summary>
+    Bk = 97,
+    /// <summary>Calif√≥rnio</summary>
+    Cf = 98,
+    /// <summary>Einsteinio</summary>
+    Es = 99,
+    /// <summary>F√©rmio</summary>
+    Fm = 100,
+    /// <summary>Mendel√©vio</summary>
+    Md = 101,
+    /// <summary>Nob√©lio</summary>
+    No = 102,
+    /// <summary>Laur√™ncio</summary>
+    Lr = 103,
+    /// <summary>Rutherf√≥rdio</summary>
+    Rf = 104,
+    /// <summary>D√∫bnio</summary>
+    Db = 105,
+    /// <summary>Seab√≥rgio</summary>
+    Sg = 106,
+    /// <summary>B√≥hrio</summary>
+    Bh = 107,
+    /// <summary>H√°ssio</summary>
+    Hs = 108,
+    /// <summary>Meitn√©rio</summary>
+    Mt = 109,
+    /// <summary>Darmst√°dio</summary>
+    Ds = 110,
+    /// <summary>Roentg√™nio</summary>
+    Rg = 111,
+    /// <summary>Copern√≠cio</summary>
+    Cn = 112,
+    /// <summary>Nih√¥nio</summary>
+    Nh = 113,
+    /// <summary>Fler√≥vio</summary>
+    Fl = 114,
+    /// <summary>Mosc√≥vio</summary>
+    Mc = 115,
+    /// <summary>Liverm√≥rio</summary>
+    Lv = 116,
+    /// <summary>Tenessino</summary>
+    Ts = 117,
+    /// <summary>Oganess√¥nio</summary>
+    Og = 118
 }
