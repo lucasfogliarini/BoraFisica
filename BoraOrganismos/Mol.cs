@@ -31,12 +31,12 @@ public record Mol(IReadOnlyList<Atomo> Atomos)
     /// <summary>
     /// Número total de átomos presentes no sistema.
     /// </summary>
-    public int QuantidadeTotalDeAtomos => Atomos.Count;
+    public int QuantidadeDeAtomos => Atomos.Count;
 
     /// <summary>
     /// Quantidade de mols representada por esse conjunto de átomos.
     /// </summary>
-    public double QuantidadeEmMols => QuantidadeTotalDeAtomos / Avogadro;
+    public double QuantidadeEmMols => QuantidadeDeAtomos / Avogadro;
 
     /// <summary>
     /// Dicionário com a contagem de cada elemento presente no sistema.

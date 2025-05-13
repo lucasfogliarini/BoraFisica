@@ -3,15 +3,9 @@
 public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadOnlyList<Particula> Eletrons)
 {
     /// <summary>
-    /// Massa do átomo considerando o defeito de massa (energia de ligação nuclear).
-    /// Este valor será menor que a massa teórica.
+    /// Massa do átomo considerando a energia de ligação nuclear.
     /// </summary>
-    public double Massa => MassaTeorica - DefeitoDeMassa;
-
-    /// <summary>
-    /// Massa total do átomo (em unidades de massa atômica), somando prótons, nêutrons e elétrons.
-    /// </summary>
-    public double MassaTeorica => Nucleons.Sum(e => e.Massa) + Eletrons.Sum(e => e.Massa);
+    public double Massa => Nucleons.Sum(e => e.Massa) + Eletrons.Sum(e => e.Massa);
 
     /// <summary>
     /// Número atômico (Z), ou seja, o número de prótons no núcleo.
