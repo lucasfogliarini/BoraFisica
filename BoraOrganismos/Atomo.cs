@@ -18,15 +18,22 @@ public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadO
     public int NumeroDeNeutrons => Nucleons.Count(p => p.Tipo == TipoParticula.Neutron);
 
     /// <summary>
-    /// Cria uma instância de <see cref="Atomo"/> com base no elemento químico informado.
-    /// Por padrão, o átomo é gerado com o mesmo número de nêutrons e prótons (modelo simplificado).
-    /// Caso <paramref name="isotopoAbundante"/> seja verdadeiro, o átomo será criado com o número de nêutrons
+    /// Cria uma instância de <see cref="Atomo"/> com o número de nêutrons
     /// correspondente ao isótopo natural mais abundante conhecido para o elemento.
     /// </summary>
-    public static Atomo Criar(Elemento elemento, bool isotopoAbundante = false)
+    public static Atomo CriarIsotopoAbundante(Elemento elemento)
+    {
+        int neutrons = NeutronsIsotopoAbundante(elemento);
+        return Criar(elemento, neutrons);
+    }
+
+    /// <summary>
+    /// Cria uma instância de <see cref="Atomo"/> com base no elemento químico informado.
+    /// </summary>
+    public static Atomo Criar(Elemento elemento, int? neutrons = null)
     {
         int numeroAtomico = (int)elemento;
-        int neutrons = isotopoAbundante ? Neutrons(elemento) : numeroAtomico;
+        neutrons ??= numeroAtomico;
 
         List<Particula> nucleons = [];
         List<Particula> eletrons = [];
@@ -46,9 +53,9 @@ public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadO
     /// <summary>
     /// Funde dois átomos, criando um novo átomo com a soma dos nêutrons e prótons.
     /// </summary>
-    public Atomo Fundir(Atomo atomo2)
+    public static Atomo Fundir(Atomo atomo1, Atomo atomo2)
     {
-        var novosNucleons = Nucleons.Concat(atomo2.Nucleons).ToList();
+        var novosNucleons = atomo1.Nucleons.Concat(atomo2.Nucleons).ToList();
         var numeroProtons = novosNucleons.Count(p => p.Tipo == TipoParticula.Proton);
 
         var novosEletrons = Enumerable.Range(0, numeroProtons)
@@ -61,6 +68,14 @@ public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadO
     }
 
     /// <summary>
+    /// Funde dois átomos, criando um novo átomo com a soma dos nêutrons e prótons.
+    /// </summary>
+    public Atomo Fundir(Atomo atomo2)
+    {
+        return Fundir(this, atomo2);
+    }
+
+    /// <summary>
     /// Retorna o número de nêutrons do isótopo mais abundante (ou estável) para o elemento especificado,
     /// com base em dados reais de abundância isotópica da Tabela Periódica até Z = 90 (Tório).
     ///
@@ -70,7 +85,7 @@ public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadO
     ///
     /// Fonte dos dados: IUPAC, NIST e valores de isótopos mais estáveis conhecidos.
     /// </summary>
-    private static int Neutrons(Elemento elemento)
+    public static int NeutronsIsotopoAbundante(Elemento elemento)
     {
         int numeroAtomico = (int)elemento;
 

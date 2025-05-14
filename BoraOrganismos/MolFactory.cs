@@ -7,7 +7,7 @@
         /// </summary>
         public static Mol Criar(Elemento elemento)
         {
-            return new Mol([Atomo.Criar(elemento, true)]);
+            return new Mol([Atomo.CriarIsotopoAbundante(elemento)]);
         }
         /// <summary>
         /// Cria uma molécula de água (H₂O).
@@ -51,8 +51,8 @@
         {
             return new Mol([
                 Atomo.Criar(Elemento.O),
-        Atomo.Criar(Elemento.O),
-        Atomo.Criar(Elemento.O)
+                Atomo.Criar(Elemento.O),
+                Atomo.Criar(Elemento.O)
             ]);
         }
 
@@ -63,7 +63,7 @@
         {
             return new Mol([
                 Atomo.Criar(Elemento.N),
-        Atomo.Criar(Elemento.N)
+                Atomo.Criar(Elemento.N)
             ]);
         }
 
@@ -85,9 +85,9 @@
         {
             return new Mol([
                 Atomo.Criar(Elemento.N),
-        Atomo.Criar(Elemento.H),
-        Atomo.Criar(Elemento.H),
-        Atomo.Criar(Elemento.H)
+                Atomo.Criar(Elemento.H),
+                Atomo.Criar(Elemento.H),
+                Atomo.Criar(Elemento.H)
             ]);
         }
 
@@ -98,10 +98,10 @@
         {
             return new Mol([
                 Atomo.Criar(Elemento.C),
-        Atomo.Criar(Elemento.H),
-        Atomo.Criar(Elemento.H),
-        Atomo.Criar(Elemento.H),
-        Atomo.Criar(Elemento.H)
+                Atomo.Criar(Elemento.H),
+                Atomo.Criar(Elemento.H),
+                Atomo.Criar(Elemento.H),
+                Atomo.Criar(Elemento.H)
             ]);
         }
 

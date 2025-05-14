@@ -3,6 +3,22 @@
     public class AtomoTests
     {
         [Theory]
+        [InlineData(1, 0, 1)]// Hidrogênio |  H¹     | Átomo neutro
+        [InlineData(1, 1, 1)]// Deutério   | ²H ou D | Isótopo do hidrogênio
+        [InlineData(1, 2, 1)]// Trítio     | ³H ou T | Radioativo, também H isótopo
+        public void CriarHidrogenio(int protonsEsperados, int neutronsEsperados, int eletronsEsperados)
+        {
+            // Act
+            var atomoFundido = Atomo.Criar(Elemento.H, neutronsEsperados);
+
+            // Assert
+            Assert.Equal(Elemento.H, atomoFundido.Elemento);
+            Assert.Equal(protonsEsperados, atomoFundido.Nucleons.Count(p => p.Tipo == TipoParticula.Proton));
+            Assert.Equal(neutronsEsperados, atomoFundido.Nucleons.Count(p => p.Tipo == TipoParticula.Neutron));
+            Assert.Equal(eletronsEsperados, atomoFundido.Eletrons.Count);
+        }
+
+        [Theory]
         [InlineData(Elemento.H, Elemento.H, Elemento.He)] // H¹ + H¹ → He²
         [InlineData(Elemento.He, Elemento.H, Elemento.Li)] // He² + H¹ → Li³
         [InlineData(Elemento.He, Elemento.He, Elemento.Be)] // He² + He² → Be⁴
