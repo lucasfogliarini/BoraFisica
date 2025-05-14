@@ -57,6 +57,10 @@ public class Estrela(int protons)
         // Retira um próton livre
         var proton = ProtonsLivres.Dequeue();
 
+        // Libera os elétrons que estavam no deuterio
+        foreach (var eletron in deuterio.Eletrons)
+            EletronsLivres.Enqueue(eletron);
+
         // Coleta os nucleons do deutério (¹p + ¹n) e adiciona mais um próton: total 2 prótons + 1 nêutron = ³He        
         var nucleons = deuterio.Nucleons.Append(proton).ToList();
 

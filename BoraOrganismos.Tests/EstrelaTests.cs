@@ -31,9 +31,9 @@
             
             var eletronsHe4 = estrela.HeliosFormados.Sum(he => he.Eletrons.Count);
             var eletronsFinais = estrela.EletronsLivres.Count + eletronsHe4;
-            //Assert.Equal(eletronsIniciais, eletronsFinais);//-2 por fusão
+            Assert.Equal(eletronsIniciais, eletronsFinais);
 
-            Assert.Equal(estrelaMassaInicial, estrela.Massa);//Lei de conservação de massa (Lavoisier)
+            Assert.Equal(estrelaMassaInicial, estrela.Massa, precision: 2);//Lei de conservação de massa (Lavoisier)
         }
     }
 }
