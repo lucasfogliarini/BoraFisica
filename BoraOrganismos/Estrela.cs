@@ -1,6 +1,6 @@
 ﻿namespace BoraOrganismos;
 
-public class Estrela(int protons)
+public class Estrela(int protons) : IMassivo
 {
     public double Massa => ProtonsLivres.Sum(p => p.Massa) +
                             EletronsLivres.Sum(e => e.Massa) +

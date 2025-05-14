@@ -1,6 +1,6 @@
 namespace BoraOrganismos
 {
-    public record Particula(TipoParticula Tipo, double Carga, double Massa, double Spin)
+    public record Particula(TipoParticula Tipo, double Carga, double Massa, double Spin) : IMassivo
     {
         public const double MASSA_PROTON = 0.9999; // Massa efetiva média do próton ligado (u)
         public const double MASSA_PROTON_LIVRE = 1.007276;  // Massa do próton livre (u)

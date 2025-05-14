@@ -18,10 +18,10 @@
             var mol = MolFactory.Criar(elemento);
 
             double quantidadeEmMolsEsperado = mol.QuantidadeDeAtomos / Mol.Avogadro;
-            double massaEmGramasEsperado = mol.MassaAtomica * Mol.UnidadeMassaAtomicaEmGramas;
+            double massaEmGramasEsperado = mol.Massa * Mol.UnidadeMassaAtomicaEmGramas;
 
             // Assert
-            Assert.Equal(massaAtomicaEsperada, mol.MassaAtomica, precision: 2);
+            Assert.Equal(massaAtomicaEsperada, mol.Massa, precision: 2);
             Assert.Equal(massaEmGramasEsperado, mol.MassaEmGramas, precision: 5);
             Assert.Equal(quantidadeEmMolsEsperado, mol.QuantidadeEmMols, precision: 6);
         }
@@ -31,13 +31,13 @@
         {
             // Arrange
             var h2o = MolFactory.CriarH2O();
-            double massaEsperadaEmU = h2o.MassaAtomica;
+            double massaEsperadaEmU = h2o.Massa;
             double massaEsperadaEmGramas = massaEsperadaEmU * Mol.UnidadeMassaAtomicaEmGramas;
             double quantidadeEsperadaDeMol = h2o.QuantidadeDeAtomos / Mol.Avogadro;
 
             // Assert
             Assert.Equal(3, h2o.QuantidadeDeAtomos);
-            Assert.Equal(massaEsperadaEmU, h2o.MassaAtomica, precision: 2);
+            Assert.Equal(massaEsperadaEmU, h2o.Massa, precision: 2);
             Assert.Equal(massaEsperadaEmGramas, h2o.MassaEmGramas, precision: 5);
             Assert.Equal(quantidadeEsperadaDeMol, h2o.QuantidadeEmMols, precision: 6);
         }
@@ -57,7 +57,7 @@
 
             Assert.Equal("CO2", co2.Nome);
 
-            Assert.True(co2.MassaAtomica > 0);
+            Assert.True(co2.Massa > 0);
         }
 
     }

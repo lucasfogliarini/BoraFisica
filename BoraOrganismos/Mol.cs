@@ -1,6 +1,6 @@
 ﻿namespace BoraOrganismos;
 
-public record Mol(IReadOnlyList<Atomo> Atomos)
+public record Mol(IReadOnlyList<Atomo> Atomos) : IMassivo
 {
     /// <summary>
     /// Constante de Avogadro: número de entidades (átomos ou moléculas) por mol.
@@ -21,12 +21,12 @@ public record Mol(IReadOnlyList<Atomo> Atomos)
     /// <summary>
     /// Massa de todos os átomos do sistema (em unidades de massa atômica).
     /// </summary>
-    public double MassaAtomica => Atomos.Sum(atomo => atomo.Massa);
+    public double Massa => Atomos.Sum(atomo => atomo.Massa);
 
     /// <summary>
     /// Massa atômica convertida para gramas.
     /// </summary>
-    public double MassaEmGramas => MassaAtomica * UnidadeMassaAtomicaEmGramas;
+    public double MassaEmGramas => Massa * UnidadeMassaAtomicaEmGramas;
 
     /// <summary>
     /// Número total de átomos presentes no sistema.

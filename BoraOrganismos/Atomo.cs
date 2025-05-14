@@ -1,6 +1,6 @@
 ﻿namespace BoraOrganismos;
 
-public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadOnlyList<Particula> Eletrons)
+public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadOnlyList<Particula> Eletrons) : IMassivo
 {
     /// <summary>
     /// Massa do átomo considerando a energia de ligação nuclear.
