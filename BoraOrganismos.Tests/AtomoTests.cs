@@ -36,7 +36,7 @@
         [InlineData(Elemento.O, Elemento.He, Elemento.Ne)] // O⁸ + He² → Ne¹⁰
         [InlineData(Elemento.Ne, Elemento.H, Elemento.Na)] // Ne¹⁰ + H¹ → Na¹¹
         [InlineData(Elemento.C, Elemento.C, Elemento.Mg)] // C⁶ + C⁶ → Mg¹²
-        public void Fundir(Elemento elementoAtomo1, Elemento elementoAtomo2, Elemento elementoAtomoFundido)
+        public void Fundir_DoisTiposDeAtomos(Elemento elementoAtomo1, Elemento elementoAtomo2, Elemento elementoAtomoFundido)
         {
             // Arrange
             var atomo1 = Atomo.Criar(elementoAtomo1);
@@ -44,7 +44,7 @@
             var atomoFundidoEsperado = Atomo.Criar(elementoAtomoFundido);
 
             //Act
-            var atomoFundido = atomo1.Fundir(atomo2);
+            var atomoFundido = Atomo.Fundir(atomo1, atomo2);
 
             // Assert
             Assert.Equal(atomoFundidoEsperado.NumeroAtomico, atomoFundido.NumeroAtomico);
