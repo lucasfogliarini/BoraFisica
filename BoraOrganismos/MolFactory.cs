@@ -7,7 +7,7 @@
         /// </summary>
         public static Mol Criar(Elemento elemento)
         {
-            return new Mol([Atomo.Criar(elemento)]);
+            return new Mol([Atomo.Criar(elemento, true)]);
         }
         /// <summary>
         /// Cria uma molécula de água (H₂O).

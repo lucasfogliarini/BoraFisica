@@ -18,36 +18,15 @@ public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadO
     public int NumeroDeNeutrons => Nucleons.Count(p => p.Tipo == TipoParticula.Neutron);
 
     /// <summary>
-    /// Defeito de massa estimado com base em fórmula empírica (modelo semiempírico de massa).
-    /// O valor depende do número de prótons e nêutrons.
+    /// Cria uma instância de <see cref="Atomo"/> com base no elemento químico informado.
+    /// Por padrão, o átomo é gerado com o mesmo número de nêutrons e prótons (modelo simplificado).
+    /// Caso <paramref name="isotopoAbundante"/> seja verdadeiro, o átomo será criado com o número de nêutrons
+    /// correspondente ao isótopo natural mais abundante conhecido para o elemento.
     /// </summary>
-    public double DefeitoDeMassa
-    {
-        get
-        {
-            int Z = NumeroAtomico;
-            int N = NumeroDeNeutrons;
-            int A = Z + N; // Número de massa
-
-            // Fórmula simplificada (MeV/c² convertido para u)
-            double energiaLigacaoMeV = 15.75 * A
-                                     - 17.8 * Math.Pow(A, 2.0 / 3.0)
-                                     - 0.71 * Z * Z / Math.Pow(A, 1.0 / 3.0)
-                                     - 23.7 * Math.Pow(N - Z, 2) / A;
-
-            double energiaLigacaoU = energiaLigacaoMeV / 931.494; // 1 u ≈ 931.494 MeV
-
-            return energiaLigacaoU;
-        }
-    }
-
-    /// <summary>
-    /// Cria um átomo baseado no isótopo mais estável conhecido, com número de nêutrons realista.
-    /// </summary>
-    public static Atomo Criar(Elemento elemento)
+    public static Atomo Criar(Elemento elemento, bool isotopoAbundante = false)
     {
         int numeroAtomico = (int)elemento;
-        int neutrons = Neutrons(elemento);
+        int neutrons = isotopoAbundante ? Neutrons(elemento) : numeroAtomico;
 
         List<Particula> nucleons = [];
         List<Particula> eletrons = [];
@@ -62,6 +41,23 @@ public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadO
             eletrons.Add(Particula.CriarEletron());
 
         return new Atomo(elemento, nucleons, eletrons);
+    }
+
+    /// <summary>
+    /// Funde dois átomos, criando um novo átomo com a soma dos nêutrons e prótons.
+    /// </summary>
+    public Atomo Fundir(Atomo atomo2)
+    {
+        var novosNucleons = Nucleons.Concat(atomo2.Nucleons).ToList();
+        var numeroProtons = novosNucleons.Count(p => p.Tipo == TipoParticula.Proton);
+
+        var novosEletrons = Enumerable.Range(0, numeroProtons)
+                                       .Select(_ => Particula.CriarEletron())
+                                       .ToList();
+
+        var novoElemento = (Elemento)Math.Min(numeroProtons, (int)Elemento.Og);
+
+        return new Atomo(novoElemento, novosNucleons, novosEletrons);
     }
 
     /// <summary>
