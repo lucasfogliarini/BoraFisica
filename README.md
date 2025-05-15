@@ -1,19 +1,8 @@
-# Domínio: Matéria e Transformações Naturais
+# Bora Física
 
-Este domínio modela partículas, átomos, moléculas e substâncias como água, madeira e dióxido de carbono usando classes C#.
+## Análise técnica
+  Analise tecnicamente este repositório com o [__ChatGPT__](http://chatgpt.com/?q=Analise%20tecnicamente%20esse%20reposit%C3%B3rio%20github.com/lucasfogliarini/BoraFisica).
 
-## Estrutura
+## Referências
 
-- **Particula.cs**: Representa uma partícula subatômica (próton, nêutron, elétron).
-- **Atomo.cs**: Representa um átomo com núcleo e camadas eletrônicas compostas por partículas.
-- **Molecula.cs**: Representa uma molécula formada por átomos.
-- **SubstanciaOrganica.cs**: Representa compostos como madeira (ex: celulose).
-- **SubstanciaInorganica.cs**: Representa compostos como água (H₂O) e dióxido de carbono (CO₂).
-
-## Uso
-
-Você pode usar essas classes para simular processos como:
-
-- Formação de átomos a partir de partículas
-- Formação de moléculas a partir de átomos
-- Reações entre substâncias
+- [Domain-Driven Design: Tackling Complexity in the Heart of Software, Eric Evans, 2003](http://chatgpt.com/?q=Livro%20Domain-Driven%20Design,%20Eric%20Evans)
