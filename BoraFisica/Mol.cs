@@ -1,5 +1,4 @@
-﻿namespace BoraOrganismos;
-
+﻿namespace BoraFisica;
 public record Mol(IReadOnlyList<Atomo> Atomos) : IMassivo
 {
     /// <summary>

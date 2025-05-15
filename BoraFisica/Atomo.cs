@@ -1,4 +1,4 @@
-﻿namespace BoraOrganismos;
+﻿namespace BoraFisica;
 
 public record Atomo(Elemento Elemento, IReadOnlyList<Particula> Nucleons, IReadOnlyList<Particula> Eletrons) : IMassivo
 {

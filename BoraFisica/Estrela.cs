@@ -1,4 +1,4 @@
-﻿namespace BoraOrganismos;
+﻿namespace BoraFisica;
 
 public class Estrela(int protons) : IMassivo
 {

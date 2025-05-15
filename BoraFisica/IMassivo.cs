@@ -1,7 +1,5 @@
-﻿namespace BoraOrganismos
+﻿namespace BoraFisica;
+public interface IMassivo
 {
-    public interface IMassivo
-    {
-        double Massa { get; }
-    }
+    double Massa { get; }
 }
